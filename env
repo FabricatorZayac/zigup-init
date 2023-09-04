@@ -1,0 +1,11 @@
+#!/bin/sh
+# zigup shell setup
+case ":${PATH}:" in
+    *:"$HOME/.zigup/bin":*)
+        ;;
+    *)
+        export PATH="$HOME/.zigup/bin:$PATH"
+        ;;
+esac
+
+alias zigup="zigup --install-dir ${HOME}/.zigup/compilers"
