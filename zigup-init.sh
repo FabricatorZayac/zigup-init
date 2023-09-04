@@ -64,7 +64,6 @@ setup_env() {
             printf '%s\n' "$_envstr" >> $HOME/.zshenv
         fi
     fi
-    . "$HOME/.zigup/env"
 }
 
 downloader() {
