@@ -56,12 +56,12 @@ setup_env() {
 
     ensure downloader $_envurl $ZIGUP_DIR/env
 
-    if ! grep -Fxq $_envstr $HOME/.profile; then
-        printf '%c %s\n' $_envstr >> $HOME/.profile
+    if ! grep -Fxq "$_envstr" $HOME/.profile; then
+        printf '%s\n' "$_envstr" >> $HOME/.profile
     fi
     if check_cmd zsh; then
-        if ! grep -Fxq $_envstr $HOME/.zshenv; then
-            printf '%c %s\n' $_envstr >> $HOME/.zshenv
+        if ! grep -Fxq "$_envstr" $HOME/.zshenv; then
+            printf '%s\n' "$_envstr" >> $HOME/.zshenv
         fi
     fi
     . "$HOME/.zigup/env"
