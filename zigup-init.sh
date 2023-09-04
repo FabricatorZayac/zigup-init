@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ZIGUP_UPDATE_ROOT="${ZIGUP_UPDATE_ROOT:-https://github.com/marler8997/zigup/releases/latest/download}"
+ZIGUP_UPDATE_ROOT="https://github.com/marler8997/zigup/releases/latest/download"
 ZIGUP_DIR="${HOME}/.zigup"
 
 main() {
@@ -16,24 +16,54 @@ main() {
 
     say "downloading installer"
 
-    ensure mkdir -p $ZIGUP_DIR
+    ensure mkdir -p $ZIGUP_DIR/bin
     ensure downloader $_url $ZIGUP_DIR/$_artifact
-    ensure unzip -q -u $ZIGUP_DIR/$_artifact -d $ZIGUP_DIR
-    ensure chmod u+x $ZIGUP_DIR/zigup
+    ensure unzip -q -u $ZIGUP_DIR/$_artifact -d $ZIGUP_DIR/bin
+    ensure chmod u+x $ZIGUP_DIR/bin/zigup
+    ensure rm $ZIGUP_DIR/$_artifact
 
+    setup_env
     post_install_info
 }
 
 post_install_info() {
-    printf "%s" "
+    printf '%s' "
 Welcome to Zig!
 
 Zigup will be installed into the Zigup home directory located at:
 
-  ${HOME}/.zigup
+  ${HOME}/.zigup/bin
 
-Add it to your PATH in your shell of choice
+To specify install directory for the compilers
+
+  alias zigup=\"zigup --install-dir ${HOME}/.zigup/compilers\"
+
+This path will be added to your PATH environment variable and
+this alias will be invoked by modifying the following files
+
+  ${HOME}/.profile"
+
+    if check_cmd zsh; then
+        printf '%s' "
+  ${HOME}/.zshenv
 "
+    fi
+}
+
+setup_env() {
+    local _envurl="https://raw.githubusercontent.com/FabricatorZayac/zigup-init/main/env"
+    local _envstr='. "$HOME/.zigup/env"'
+
+    ensure downloader $_envurl $ZIGUP_DIR/env
+
+    if ! grep -Fxq $_envstr $HOME/.profile; then
+        printf '%c %s\n' $_envstr >> $HOME/.profile
+    fi
+    if check_cmd zsh; then
+        if ! grep -Fxq $_envstr $HOME/.zshenv; then
+            printf '%c %s\n' $_envstr >> $HOME/.zshenv
+        fi
+    fi
 }
 
 downloader() {
