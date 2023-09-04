@@ -64,6 +64,8 @@ setup_env() {
             printf '%c %s\n' $_envstr >> $HOME/.zshenv
         fi
     fi
+
+    $_envstr
 }
 
 downloader() {
